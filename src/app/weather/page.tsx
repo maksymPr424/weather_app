@@ -1,58 +1,77 @@
 'use client';
 
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  useMapEvents,
-} from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import { useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import L from 'leaflet';
-import customMarkerIcon from '../../../public/images/marker.png';
-
-const myIcon = new L.Icon({
-  iconUrl: customMarkerIcon.src,
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-  popupAnchor: [0, -32],
-});
+import 'leaflet/dist/leaflet.css';
+import { Coordinates, getWeatherData } from '@/lib/api';
 
 export default function Weather() {
-  const [position, setPosition] = useState<[number, number] | null>([
-    50.4501, 30.5234,
-  ]); // Київ за замовчуванням
+  const mapRef = useRef<L.Map | null>(null);
+  const [marker, setMarker] = useState<L.Marker | null>(null);
+  const [weatherData, setWeatherData] = useState({});
 
-  function LocationMarker() {
-    useMapEvents({
-      click(e) {
-        console.log([e.latlng.lat, e.latlng.lng]);
+  const handleGetWeather = async (coordinates: Coordinates): Promise<void> => {
+    const fetchedWeatherData = await getWeatherData(coordinates);
 
-        setPosition([e.latlng.lat, e.latlng.lng]);
-      },
-    });
+    if (Object.keys(fetchedWeatherData).length === 0) {
+      return;
+    }
+    console.log(fetchedWeatherData);
 
-    return position ? (
-      <Marker position={position} icon={myIcon}>
-        <Popup>
-          📍 Ви вибрали точку: {position[0].toFixed(4)},{' '}
-          {position[1].toFixed(4)}
-        </Popup>
-      </Marker>
-    ) : null;
-  }
+    setWeatherData(fetchedWeatherData);
+  };
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (!mapRef.current) {
+        mapRef.current = L.map('map').setView([52.2298, 21.0118], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors',
+        }).addTo(mapRef.current);
+      }
+
+      const customIcon = L.icon({
+        iconUrl: '/images/marker.png',
+        iconSize: [32, 42],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
+      });
+
+      const handleClick = (e: L.LeafletMouseEvent): void => {
+        const { lat, lng } = e.latlng;
+
+        if (marker) {
+          marker.remove();
+        }
+
+        const newMarker = L.marker([lat, lng], { icon: customIcon })
+          .addTo(mapRef.current as L.Map)
+          .bindPopup(
+            `Aktualne współrzędne: ${lat.toFixed(5)}, ${lng.toFixed(5)}`,
+          )
+          .openPopup();
+
+        setMarker(newMarker);
+        handleGetWeather({ lat, lng });
+      };
+
+      mapRef.current.on('click', handleClick);
+
+      return () => {
+        if (mapRef.current) {
+          mapRef.current.off('click', handleClick);
+        }
+      };
+    }
+  }, [marker]);
 
   return (
-    <div className="w-[500px] h-[500px]">
-      <MapContainer
-        center={position!}
-        zoom={6}
-        className="h-full w-full rounded-lg shadow-lg"
-      >
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        <LocationMarker />
-      </MapContainer>
+    <div>
+      <div>
+        <div id="map" style={{ width: '100%', height: '500px' }}></div>
+        {Object.keys(weatherData).length === 0 ? <p>Nema</p> : <p>jest</p>}
+      </div>
     </div>
   );
 }
