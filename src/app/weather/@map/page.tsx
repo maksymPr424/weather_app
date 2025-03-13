@@ -1,24 +1,20 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Coordinates, getWeatherData } from '@/lib/api';
+import { ICoordinates } from '@/lib/api';
+import { getWeatherData } from '@/redux/weather/operations';
+import { useAppDispatch } from '@/redux/hooks';
 
-export default function Weather() {
+export default function Map() {
+  const dispatch = useAppDispatch();
   const mapRef = useRef<L.Map | null>(null);
   const [marker, setMarker] = useState<L.Marker | null>(null);
-  const [weatherData, setWeatherData] = useState({});
 
-  const handleGetWeather = async (coordinates: Coordinates): Promise<void> => {
-    const fetchedWeatherData = await getWeatherData(coordinates);
-
-    if (Object.keys(fetchedWeatherData).length === 0) {
-      return;
-    }
-    console.log(fetchedWeatherData);
-
-    setWeatherData(fetchedWeatherData);
+  const handleGetWeather = async (coordinates: ICoordinates) => {
+    await dispatch(getWeatherData(coordinates));
   };
 
   useEffect(() => {
@@ -69,8 +65,7 @@ export default function Weather() {
   return (
     <div>
       <div>
-        <div id="map" style={{ width: '100%', height: '500px' }}></div>
-        {Object.keys(weatherData).length === 0 ? <p>Nema</p> : <p>jest</p>}
+        <div id="map" style={{ width: '100%', height: '450px' }}></div>
       </div>
     </div>
   );
