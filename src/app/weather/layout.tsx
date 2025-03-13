@@ -1,23 +1,26 @@
+'use client';
+import dynamic from 'next/dynamic';
+
+const Map = dynamic(() => import('../components/map'), {
+  ssr: false,
+});
+
 export interface ILayoutProps {
-  map: React.ReactNode;
   current: React.ReactNode;
   location: React.ReactNode;
   forecast: React.ReactNode;
 }
 
-export default function Layout({
-  map,
-  current,
-  location,
-  forecast,
-}: ILayoutProps) {
+export default function Layout({ current, location, forecast }: ILayoutProps) {
   return (
-    <main>
+    <main className="p-4 md:p-5 max-w-[375px] md:max-w-[768px] xl:max-w-[1280px] mx-auto">
       <section>
-        {location} {map}
+        {location}
+        <Map />
       </section>
-      <section className="p-4 md:flex">
-        {current} {forecast}
+      <section className="mt-5 md:flex md:gap-4">
+        {current}
+        {forecast}
       </section>
     </main>
   );

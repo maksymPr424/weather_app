@@ -16,7 +16,6 @@ export const getWeatherData = createAsyncThunk(
       const history = await axios('/history.json', {
         params: { key: apiKey, q: `${lat},${lng}`, dt: new Date() },
       });
-      console.log(history.data.forecast.forecastday[0]);
 
       return { ...data, forecast: history.data.forecast.forecastday[0] };
     } catch (e) {

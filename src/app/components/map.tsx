@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { ICoordinates } from '@/lib/api';
@@ -65,7 +66,7 @@ export default function Map() {
   return (
     <div>
       <div>
-        <div id="map" style={{ width: '100%', height: '450px' }}></div>
+        <div id="map" className="w-full h-[450px] xl:h-[600px]"></div>
       </div>
     </div>
   );

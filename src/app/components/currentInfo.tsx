@@ -9,7 +9,7 @@ interface ICurrentInfoProps {
 export default function CurrentInfo({ current }: ICurrentInfoProps) {
   if (!current) {
     return (
-      <div className="max-w-xl mb-4 md:mb-4 mx-auto rounded-lg shadow-lg">
+      <div className="max-w-max w-full mb-4 md:mb-0 mx-auto rounded-lg shadow-lg bg-gray-800 p-4 md:m-0">
         <div>
           <div className="flex items-center mb-4">
             <Image
@@ -31,14 +31,16 @@ export default function CurrentInfo({ current }: ICurrentInfoProps) {
           <p className="text-slate-500">Precipitation in mm</p>
           <p className="text-slate-500">Pressure in mb</p>
           <p className="text-slate-500">Wind in kph</p>
-          <p className="text-slate-400 text-sm mt-4">Last updated date</p>
+          <p className="text-slate-400 text-sm mt-4 md:mt-25">
+            Last updated date
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex w-full md:max-w-max mx-auto rounded-lg shadow-lg">
+    <div className="w-full md:max-w-max mb-4 md:mb-0 mx-auto rounded-lg shadow-lg bg-gray-800 p-4 md:m-0">
       <div className="rounded-lg shadow-md">
         <div className="flex items-center mb-4">
           <Image
@@ -57,14 +59,14 @@ export default function CurrentInfo({ current }: ICurrentInfoProps) {
           </div>
         </div>
 
-        <p className="text-slate-400">Humidity: {current.humidity}%</p>
-        <p className="text-slate-400">Cloud cover: {current.cloud}%</p>
-        <p className="text-slate-400">Precipitation: {current.precip_mm} mm</p>
-        <p className="text-slate-400">Pressure: {current.peressure_mb} mb</p>
-        <p className="text-slate-400">
+        <p className="text-slate-300">Humidity: {current.humidity}%</p>
+        <p className="text-slate-300">Cloud cover: {current.cloud}%</p>
+        <p className="text-slate-300">Precipitation: {current.precip_mm} mm</p>
+        <p className="text-slate-300">Pressure: {current.peressure_mb} mb</p>
+        <p className="text-slate-300">
           Wind: {current.wind_kph} kph {current.wind_dir}
         </p>
-        <p className="text-slate-300 text-sm mt-4">
+        <p className="text-slate-200 text-sm mt-4 md:mt-25">
           Last updated: {current.last_updated}
         </p>
       </div>
